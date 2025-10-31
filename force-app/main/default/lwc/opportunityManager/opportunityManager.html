@@ -1,7 +1,7 @@
 <template>
 
     <lightning-card title="Opportunity Manager" icon-name="standard:opportunity">
-        
+
         <template if:true={isLoadedOpportunities}>
 
             <lightning-datatable
@@ -11,6 +11,26 @@
                 onrowaction={handleRowAction}
                 hide-checkbox-column>
             </lightning-datatable>
+
+            <div class="slds-m-top_medium slds-align_absolute-center">
+
+                <lightning-button 
+                    label="Anterior" 
+                    onclick={handlePrevious} 
+                    disabled={isFirstPage}>
+                </lightning-button>
+
+                <span class="slds-m-horizontal_medium">
+                    Página {pageNumber} de {totalPages}
+                </span>
+
+                <lightning-button 
+                    label="Próximo" 
+                    onclick={handleNext} 
+                    disabled={isLastPage}>
+                </lightning-button>
+
+            </div>
 
         </template>
 

@@ -1,4 +1,4 @@
-import { LightningElement, track, wire } from 'lwc';
+import { LightningElement, track, wire, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent'
 import getAllOpportunities from '@salesforce/apex/OpportunityController.getAllOpportunities';
@@ -8,18 +8,25 @@ import closeOpportunity from '@salesforce/apex/OpportunityController.closeOpport
 export default class OpportunityManager extends NavigationMixin(LightningElement) {
 
     @track isLoadedOpportunities = false;
+    @track allOpportunities = [];
     @track opportunities = [];
     @track columns = [];
+
+    @api pageSize = 5;
+    @track pageNumber = 1;
+    @track totalPages = 0;
 
     @wire(getAllOpportunities, {})
     getOpportunities({ data, error }) {
         if (data) {
-            this.opportunities = data.map((opp) => {
+            this.allOpportunities = data.map((opp) => {
                 return {
                     ...opp,
                     buttonVariant: opp.IsClosed ? 'neutral' : 'success' 
                 };
             });
+            this.totalPages = Math.ceil(this.allOpportunities.length / this.pageSize);
+            this.setPageData();
             this.isLoadedOpportunities = true;
         } else if (error) {
             this.showToast('Erro', 'Houve um erro ao carregar as oportunidades.', 'error');
@@ -59,6 +66,34 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
                 }
             }
         ];
+    }
+
+    setPageData() {
+        const start = (this.pageNumber - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        this.opportunities = this.allOpportunities.slice(start, end);
+    }
+
+    get isFirstPage() {
+        return this.pageNumber === 1;
+    }
+
+    get isLastPage() {
+        return this.pageNumber === this.totalPages;
+    }
+
+    handlePrevious() {
+        if (!this.isFirstPage) {
+            this.pageNumber--;
+            this.setPageData();
+        }
+    }
+
+    handleNext() {
+        if (!this.isLastPage) {
+            this.pageNumber++;
+            this.setPageData();
+        }
     }
 
     handleRowAction(event) {

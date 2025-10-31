@@ -10,4 +10,16 @@
         <target>lightning__RecordPage</target>
     </targets>
 
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__HomePage,lightning__RecordPage">
+            <property 
+                name="pageSize" 
+                type="Integer" 
+                label="Quantidade de registros por página" 
+                description="Número de oportunidades exibidas por página"
+                default="5" 
+            />
+        </targetConfig>
+    </targetConfigs>
+
 </LightningComponentBundle>
