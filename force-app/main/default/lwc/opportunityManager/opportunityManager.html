@@ -1,3 +1,24 @@
 <template>
+
+    <lightning-card>
+
+        <template if:true={isLoadedOpportunities}>
+
+            <lightning-datatable
+                key-field="Id"
+                data={opportunities}
+                columns={columns}
+                hide-checkbox-column>
+            </lightning-datatable>
+
+        </template>
+
+        <template if:false={isLoadedOpportunities}>
+
+            <lightning-spinner alternative-text="Carregando Oportunidades..." size="medium"></lightning-spinner>
+            
+        </template>
+
+    </lightning-card>
     
 </template>

@@ -1,14 +1,10 @@
 public with sharing class OpportunityController {
 
-    private static OpportunityService oppService;
+    private static OpportunityService oppService = new OpportunityService();
 
-    public OpportunityController(){
-        oppService = new OpportunityService();
-    }
-    
     @AuraEnabled(cacheable=true)
     public static List<OpportunityService.DataResult> getAllOpportunities(){
         return oppService.getAllOpportunities();
     }
-    
+
 }
