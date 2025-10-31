@@ -1,7 +1,9 @@
 import { LightningElement, track, wire } from 'lwc';
-import getAllOpportunities from '@salesforce/apex/OpportunityController.getAllOpportunities';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent'
+import getAllOpportunities from '@salesforce/apex/OpportunityController.getAllOpportunities';
+import closeOpportunity from '@salesforce/apex/OpportunityController.closeOpportunity';
+
 
 export default class OpportunityManager extends NavigationMixin(LightningElement) {
 
@@ -12,7 +14,12 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
     @wire(getAllOpportunities, {})
     getOpportunities({ data, error }) {
         if (data) {
-            this.opportunities = data;
+            this.opportunities = data.map((opp) => {
+                return {
+                    ...opp,
+                    buttonVariant: opp.IsClosed ? 'neutral' : 'success' 
+                };
+            });
             this.isLoadedOpportunities = true;
         } else if (error) {
             this.showToast('Erro', 'Houve um erro ao carregar as oportunidades.', 'error');
@@ -39,6 +46,17 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
                     title: 'Ver Detalhes',
                     variant: 'brand',
                 }
+            },
+            {
+                type: 'button',
+                initialWidth: 200,
+                typeAttributes: {
+                    label: 'Marcar como Fechada',
+                    name: 'mark_closed',
+                    title: 'Marcar como Fechada',
+                    disabled: { fieldName: 'isClosed' },
+                    variant: { fieldName: 'buttonVariant' }                     
+                }
             }
         ];
     }
@@ -50,6 +68,9 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
         switch (actionName) {
             case 'view_details':
                 this.navigateToOpportunity(row.idOpp);
+                break;
+            case 'mark_closed':
+                this.markAsClosed(row);
                 break;
             default:
                 break;
@@ -65,6 +86,23 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
                 actionName: 'view'
             }
         });
+    }
+
+    async markAsClosed(opportunity) {
+        try {
+            const response = await closeOpportunity({ idOpp : opportunity.idOpp });
+
+            if(response.type == 'success'){
+                opportunity.buttonVariant = 'neutral';
+                opportunity.isClosed = true;
+            }
+
+            this.buildColumns();
+
+            this.showToast('Resultado', response.message, response.type);
+        } catch (e) {
+            this.showToast('Erro', e.body?.message || e.message, 'error');
+        }
     }
 
     showToast(title, message, variant = 'info'){
