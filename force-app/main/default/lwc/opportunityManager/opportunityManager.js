@@ -95,6 +95,7 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
             if(response.type == 'success'){
                 opportunity.buttonVariant = 'neutral';
                 opportunity.isClosed = true;
+                opportunity.stageName = 'Closed Won';
             }
 
             this.buildColumns();
