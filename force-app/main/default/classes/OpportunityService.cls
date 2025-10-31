@@ -56,7 +56,6 @@ public inherited sharing class OpportunityService {
     }
 
     public class ClosedOpportunityResult {
-        //Aqui eu poderia ter usado o Label do salesforce para não precisar dar deploy em código para mudar mensagem
         @AuraEnabled public String type;
         @AuraEnabled public String message;
 
