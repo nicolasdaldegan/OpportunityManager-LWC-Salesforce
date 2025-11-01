@@ -12,5 +12,9 @@ public inherited sharing class OpportunitySelector {
         Database.update(opp);
     }
 
+    public static List<Opportunity> getOpportunitiesByAccountFilter(String accountName) {
+        String filter = '%' + accountName + '%';
+        return [SELECT Id, Account.Name, Name, Amount, CloseDate, StageName, IsClosed FROM Opportunity WHERE Account.Name LIKE :filter];
+    }
 
 }

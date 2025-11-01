@@ -1,16 +1,13 @@
 public inherited sharing class OpportunityService {
 
     public List<DataResult> getAllOpportunities(){
-        
         List<Opportunity> opps = OpportunitySelector.getAllOpportunities();
+        return makeDataResult(opps);
+    }
 
-        List<DataResult> listReturn = new List<DataResult>();
-
-        for(Opportunity opp : opps){
-            listReturn.add(new DataResult(opp));
-        }
-
-        return listReturn;
+    public List<DataResult> getOpportunitiesByAccountFilter(String accountName){
+        List<Opportunity> opps = OpportunitySelector.getOpportunitiesByAccountFilter(accountName);
+        return makeDataResult(opps);
     }
 
     public ClosedOpportunityResult closeOpportunity(String idOpp){
@@ -33,6 +30,16 @@ public inherited sharing class OpportunityService {
         }
 
         return new ClosedOpportunityResult('success', 'Oportunidade atualizada com sucesso');
+    }
+
+    private List<DataResult> makeDataResult(List<Opportunity> opps){
+        List<DataResult> listReturn = new List<DataResult>();
+
+        for(Opportunity opp : opps){
+            listReturn.add(new DataResult(opp));
+        }
+
+        return listReturn;
     }
 
     public class DataResult {
