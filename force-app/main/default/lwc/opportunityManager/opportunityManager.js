@@ -1,9 +1,10 @@
 import { LightningElement, track, wire, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent'
+
 import getAllOpportunities from '@salesforce/apex/OpportunityController.getAllOpportunities';
 import closeOpportunity from '@salesforce/apex/OpportunityController.closeOpportunity';
-
+import getOpportunitiesByAccountFilter from '@salesforce/apex/OpportunityController.getOpportunitiesByAccountFilter';
 
 export default class OpportunityManager extends NavigationMixin(LightningElement) {
 
@@ -139,6 +140,35 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
         } catch (e) {
             this.showToast('Erro', e.body?.message || e.message, 'error');
         }
+    }
+
+    async handleChangeFilter(event){
+
+        const accountName = event.target.value;
+
+        try {
+            const response = await getOpportunitiesByAccountFilter({ accountName : accountName });
+
+            if(response.size == 0){
+                this.allOpportunities = [];
+                this.totalPages = 1;
+                this.opportunities = [];
+                return;
+            }
+
+            this.allOpportunities = response.map((opp) => {
+                return {
+                    ...opp,
+                    buttonVariant: opp.IsClosed ? 'neutral' : 'success' 
+                };
+            });
+            this.totalPages = Math.ceil(this.allOpportunities.length / this.pageSize);
+            this.setPageData();
+            this.buildColumns();
+        } catch (e) {
+            this.showToast('Erro', e.body?.message || e.message, 'error');
+        }
+
     }
 
     showToast(title, message, variant = 'info'){
