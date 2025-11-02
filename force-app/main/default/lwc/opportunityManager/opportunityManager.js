@@ -20,14 +20,8 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
     @wire(getAllOpportunities, {})
     getOpportunities({ data, error }) {
         if (data) {
-            this.allOpportunities = data.map((opp) => {
-                return {
-                    ...opp,
-                    buttonVariant: opp.IsClosed ? 'neutral' : 'success' 
-                };
-            });
-            this.totalPages = Math.ceil(this.allOpportunities.length / this.pageSize);
-            this.setPageData();
+            this.processOpportunities(data);
+            this.recalculatePagination();
             this.isLoadedOpportunities = true;
         } else if (error) {
             this.showToast('Erro', 'Houve um erro ao carregar as oportunidades.', 'error');
@@ -124,17 +118,50 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
         });
     }
 
+    processOpportunities(data) {
+        this.allOpportunities = data.map((opp) => ({
+            ...opp,
+            buttonVariant: opp.IsClosed ? 'neutral' : 'success'
+        }));
+        this.recalculatePagination();
+    }
+
+    refreshTable() {
+        this.buildColumns();
+    }
+
+    recalculatePagination() {
+        this.totalPages = Math.ceil(this.allOpportunities.length / this.pageSize);
+        this.pageNumber = this.totalPages > 0 ? 1 : 0;
+        this.setPageData();
+    }
+
+    clearOpportunities() {
+        this.allOpportunities = [];
+        this.opportunities = [];
+        this.pageNumber = 0;
+        this.totalPages = 0;
+    }
+
     async markAsClosed(opportunity) {
         try {
             const response = await closeOpportunity({ idOpp : opportunity.idOpp });
 
             if(response.type == 'success'){
-                opportunity.buttonVariant = 'neutral';
-                opportunity.isClosed = true;
-                opportunity.stageName = 'Closed Won';
-            }
+                const updatedFields = {
+                    buttonVariant: 'neutral',
+                    isClosed: true,
+                    stageName: 'Closed Won'
+                };
 
-            this.buildColumns();
+                this.opportunities = this.opportunities.map(
+                    opp => opp.idOpp === opportunity.idOpp ? { ...opp, ...updatedFields } : opp
+                );
+
+                this.allOpportunities = this.allOpportunities.map(
+                    opp => opp.idOpp === opportunity.idOpp ? { ...opp, ...updatedFields } : opp
+                );
+            }
 
             this.showToast('Resultado', response.message, response.type);
         } catch (e) {
@@ -150,23 +177,12 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
             const response = await getOpportunitiesByAccountFilter({ accountName : accountName });
 
             if(response.length  === 0){
-                this.allOpportunities = [];
-                this.pageNumber = 0;
-                this.totalPages = 0;
-                this.opportunities = [];
+                this.clearOpportunities();
                 return;
             }
 
-            this.allOpportunities = response.map((opp) => {
-                return {
-                    ...opp,
-                    buttonVariant: opp.IsClosed ? 'neutral' : 'success' 
-                };
-            });
-            this.totalPages = Math.ceil(this.allOpportunities.length / this.pageSize);
-            this.pageNumber = 1;
-            this.setPageData();
-            this.buildColumns();
+            this.processOpportunities(response);
+            this.recalculatePagination();
         } catch (e) {
             this.showToast('Erro', e.body?.message || e.message, 'error');
         }
