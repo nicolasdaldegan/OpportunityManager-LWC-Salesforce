@@ -47,7 +47,7 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
             {
                 type: 'button',
                 label: 'Ações',
-                initialWidth: 200,
+                initialWidth: 125,
                 typeAttributes: {
                     label: 'Ver Detalhes',
                     name: 'view_details',
@@ -57,7 +57,7 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
             },
             {
                 type: 'button',
-                initialWidth: 200,
+                initialWidth: 180,
                 typeAttributes: {
                     label: 'Marcar como Fechada',
                     name: 'mark_closed',
