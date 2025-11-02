@@ -76,7 +76,7 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
     }
 
     get isFirstPage() {
-        return this.pageNumber === 1;
+        return this.pageNumber === 1 || this.pageNumber === 0;
     }
 
     get isLastPage() {
@@ -149,9 +149,10 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
         try {
             const response = await getOpportunitiesByAccountFilter({ accountName : accountName });
 
-            if(response.size == 0){
+            if(response.length  === 0){
                 this.allOpportunities = [];
-                this.totalPages = 1;
+                this.pageNumber = 0;
+                this.totalPages = 0;
                 this.opportunities = [];
                 return;
             }
@@ -163,6 +164,7 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
                 };
             });
             this.totalPages = Math.ceil(this.allOpportunities.length / this.pageSize);
+            this.pageNumber = 1;
             this.setPageData();
             this.buildColumns();
         } catch (e) {

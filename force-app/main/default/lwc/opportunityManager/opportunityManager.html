@@ -16,15 +16,23 @@
 
         <template if:true={isLoadedOpportunities}>
 
-            
+            <template if:true={opportunities.length}>
 
-            <lightning-datatable
-                key-field="Id"
-                data={opportunities}
-                columns={columns}
-                onrowaction={handleRowAction}
-                hide-checkbox-column>
-            </lightning-datatable>
+                <lightning-datatable
+                    key-field="Id"
+                    data={opportunities}
+                    columns={columns}
+                    onrowaction={handleRowAction}
+                    hide-checkbox-column>
+                </lightning-datatable>
+
+            </template>
+
+            <template if:false={opportunities.length}>
+                <div class="slds-m-around_medium slds-text-align_center slds-text-color_weak">
+                    Nenhuma oportunidade encontrada para o filtro aplicado.
+                </div>
+            </template>
 
             <div class="slds-m-top_medium slds-align_absolute-center">
 
