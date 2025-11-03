@@ -51,7 +51,7 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
             },
             {
                 type: 'button',
-                initialWidth: 180,
+                initialWidth: 190,
                 typeAttributes: {
                     label: 'Marcar como Fechada',
                     name: 'mark_closed',
@@ -124,10 +124,6 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
             buttonVariant: opp.IsClosed ? 'neutral' : 'success'
         }));
         this.recalculatePagination();
-    }
-
-    refreshTable() {
-        this.buildColumns();
     }
 
     recalculatePagination() {
