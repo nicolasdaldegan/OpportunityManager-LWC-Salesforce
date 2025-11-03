@@ -95,15 +95,14 @@ export default class OpportunityManager extends NavigationMixin(LightningElement
         const actionName = event.detail.action.name;
         const row = event.detail.row;
 
-        switch (actionName) {
-            case 'view_details':
-                this.navigateToOpportunity(row.idOpp);
-                break;
-            case 'mark_closed':
-                this.markAsClosed(row);
-                break;
-            default:
-                break;
+        if (actionName === 'view_details') {
+            this.navigateToOpportunity(row.idOpp);
+            return;
+        }
+
+        if (actionName === 'mark_closed') {
+            this.markAsClosed(row);
+            return;
         }
     }
 
