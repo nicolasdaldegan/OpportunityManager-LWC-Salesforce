@@ -51,6 +51,8 @@ lwc/opportunityManager/__tests__/opportunityManager.test.js
 ### Apex
 ```
 classes/OpportunityControllerTest.cls
+classes/OpportunityServiceTest.cls
+classes/OpportunitySelectorTest.cls
 ```
 - Cobre todos os caminhos: sucesso, erro e exceções
 
