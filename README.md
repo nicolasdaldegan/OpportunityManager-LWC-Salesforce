@@ -25,6 +25,18 @@ OpportunityService (Regras de Negócio)
 OpportunitySelector (Consultas e DML)
 ```
 
+## Paginação — Decisão de Implementação
+A paginação foi implementada **no front-end**, para simplificar o projeto e evitar requisições extras ao servidor.
+
+Entretanto, em casos de grande volume de registros, o ideal é fazer **paginação no Apex**. Possíveis abordagens:
+
+| Cenário | Estratégia recomendada |
+|--------|------------------------|
+| Até ~2.000 registros | `OFFSET` no SOQL |
+| Muito volume (milhares+) | Paginação por chave → `WHERE Id > :lastId LIMIT X` |
+
+Isso evita carregar todos os registros na memória do navegador.
+
 ## Testes
 
 ### LWC
@@ -41,3 +53,10 @@ lwc/opportunityManager/__tests__/opportunityManager.test.js
 classes/OpportunityControllerTest.cls
 ```
 - Cobre todos os caminhos: sucesso, erro e exceções
+
+## Melhorias Futuras
+| Item | Descrição |
+|------|-----------|
+| **Uso de Labels** | Substituir mensagens hardcoded por **Custom Labels**. |
+| **Paginação no Apex** | Alterar para `OFFSET` ou paginação por Id conforme volume de registros. |
+| **fflib (Apex Enterprise Patterns)** | Aplicar mocks de forma mais robusta usando `fflib_ApexMocks` para testes unitários em grandes equipes. |
