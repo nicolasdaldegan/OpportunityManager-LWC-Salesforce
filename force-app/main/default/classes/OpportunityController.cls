@@ -16,7 +16,9 @@ public with sharing class OpportunityController {
     public static OpportunityService.ClosedOpportunityResult closeOpportunity(String idOpp){
 
         if(String.isBlank(idOpp)){
-            throw new AuraHandledException('Id da oportunidade não enviado.');
+            AuraHandledException e = new AuraHandledException('Id da oportunidade não enviado.');
+            e.setMessage('Id da oportunidade não enviado.');
+            throw e;
         }
 
         return oppService.closeOpportunity(idOpp);
