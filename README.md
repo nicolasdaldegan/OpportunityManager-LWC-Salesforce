@@ -1,18 +1,43 @@
-# Salesforce DX Project: Next Steps
+# Opportunity Manager
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+Componente Lightning Web Component (LWC) para listar, filtrar, paginar e fechar oportunidades no Salesforce. Utiliza arquitetura em camadas com Apex Controller → Service → Selector, além de testes unitários em LWC e Apex.
 
-## How Do You Plan to Deploy Your Changes?
+## Funcionalidades
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+| Funcionalidade | Descrição |
+|---|---|
+| Listagem de Oportunidades | Carrega e exibe oportunidades com paginação |
+| Filtro por Conta | Filtra oportunidades pelo nome da conta (parcial ou completo) |
+| Ver Detalhes | Navegação para a página da oportunidade |
+| Marcar como Fechada | Atualiza estágio para Closed Won |
+| Tratamento de Erro | Exibe toast quando há falha no carregamento ou atualização |
+| Testes | LWC + Apex Test garantindo cobertura e qualidade |
 
-## Configure Your Salesforce DX Project
+## Arquitetura
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+```
+LWC (opportunityManager)
+    ↓ chama
+Apex Controller (OpportunityController)
+    ↓ delega para
+OpportunityService (Regras de Negócio)
+    ↓ acessa
+OpportunitySelector (Consultas e DML)
+```
 
-## Read All About It
+## Testes
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+### LWC
+Localizados em:
+```
+lwc/opportunityManager/__tests__/opportunityManager.test.js
+```
+- Mock de Apex
+- Simulação de eventos da UI
+- Testes de paginação, filtro, navegação e atualização
+
+### Apex
+```
+classes/OpportunityControllerTest.cls
+```
+- Cobre todos os caminhos: sucesso, erro e exceções
